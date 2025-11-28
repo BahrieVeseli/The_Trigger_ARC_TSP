@@ -1,5 +1,6 @@
 import itertools
-from main import calculate_cost, A, trigger_relations
+from graph_trigger import calculate_cost, A, trigger_relations
+
 
 def generate_cycles(nodes):
     start = nodes[0]
