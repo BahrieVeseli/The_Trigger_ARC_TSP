@@ -1,17 +1,7 @@
+#!/usr/bin/env python3
 import argparse, time, random
 from tsp_solver import solve_instance
 from visualization import plot_tour
-
-def write_solution_files(tour, cost, out_path="solution.txt", portal_path="solution_for_portal.txt"):
-    
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(f"Cost={cost:.6f}\n")
-        f.write("Tour:\n")
-        f.write(" ".join(map(str, tour)) + "\n")
-    
-    with open(portal_path, "w", encoding="utf-8") as f:
-        f.write(" ".join(map(str, tour)) + "\n")
-        f.write(f"{cost:.6f}\n")
 
 if __name__=="__main__":
     p = argparse.ArgumentParser()
@@ -31,16 +21,13 @@ if __name__=="__main__":
     t1 = time.time()
     print(f"Done in {t1 - t0:.2f}s. Cost={cost:.6f}")
 
-
+    # print terminal-friendly sequence with applied costs
     print("\nRendi i turit (me kostot reale):")
     for (aidx, applied) in arc_costs:
         u, v, _ = arcs[aidx]
         print(f"{u} -> {v} (arc {aidx}, cost={applied})")
     print(f"Total cost = {cost:.6f}\n")
 
- 
-    write_solution_files(tour, cost)
-
-
+    # optional plot
     if not args.no_plot:
         plot_tour(tour, arcs, arc_by_uv, trigger_map_by_trigger)
