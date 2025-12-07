@@ -1,25 +1,29 @@
+import math
 import matplotlib.pyplot as plt
-import random
+from cost_eval import compute_tour_cost
 
-def plot_tour(tour_nodes, arcs, trigger_map_by_trigger=None):
-    coords={}
-    for node in set(tour_nodes):
-        coords[node]=(random.uniform(0,10), random.uniform(0,10))
+def plot_tour(tour_nodes, arcs, arc_by_uv, trigger_map_by_trigger, title="Trigger Arc TSP Tour"):
+    n = max(tour_nodes) + 1
+    radius = 5
+    coords = {
+        node: (
+            radius * math.cos(2 * math.pi * node / n),
+            radius * math.sin(2 * math.pi * node / n)
+        )
+        for node in range(n)
+    }
 
-    plt.figure(figsize=(8,6))
-    for node,(x,y) in coords.items():
-        plt.plot(x,y,'ko')
-        plt.text(x+0.1,y+0.1,str(node),fontsize=10)
+    total_cost, arc_costs = compute_tour_cost(tour_nodes, arcs, arc_by_uv, trigger_map_by_trigger)
 
-    for i in range(len(tour_nodes)-1):
-        u=tour_nodes[i]; v=tour_nodes[i+1]
-        x=[coords[u][0], coords[v][0]]; y=[coords[u][1], coords[v][1]]
-        color='blue'
-        if trigger_map_by_trigger and i in trigger_map_by_trigger: color='red'
-        plt.plot(x,y,color=color,linewidth=1.5)
-
-    plt.title("Trigger Arc TSP Tour")
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.grid(True)
+    plt.figure(figsize=(8, 6))
+    for node, (x, y) in coords.items():
+        plt.plot(x, y, "ko")
+        plt.text(x + 0.15, y + 0.15, str(node), fontsize=10)
+    for (aidx, cost) in arc_costs:
+        u, v, _ = arcs[aidx]
+        color = 'red' if aidx in trigger_map_by_trigger else 'blue'
+        plt.plot([coords[u][0], coords[v][0]], [coords[u][1], coords[v][1]], color=color, linewidth=1.5)
+    plt.title(title)
+    plt.axis('equal')
+    plt.tight_layout()
     plt.show()
